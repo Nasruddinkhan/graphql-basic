@@ -1,3 +1,8 @@
 type Query{
     sayHello: String
+    hello: String
+    sayHelloTo(userName: String!): String
+    randomId: Int!
+
 }
+
