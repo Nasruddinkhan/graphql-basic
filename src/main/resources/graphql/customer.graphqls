@@ -1,0 +1,19 @@
+extend type Query{
+    customers: [Customer]!
+    customerById(customerId: Int): Customer
+    customerByAddressContain(address: String):[Customer]!
+    customerByRangeId(idFilter: IdRangeFilter):[Customer]!
+}
+input IdRangeFilter{
+    minAge: Int
+    maxAge: Int
+}
+type Customer{
+    name: String
+    customerId: Int
+    city: String
+    state: String
+    country: String
+    pinCode: String
+    address: String
+}

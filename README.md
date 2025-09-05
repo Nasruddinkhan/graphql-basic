@@ -9,3 +9,4 @@ graphql schema mapped with controller via  @QueryMapping("hello")
 In graphql we are passing argument like sayHello(name : dataType): dataType in case if you want madatory
 add the  sayHello(name : dataType!)
 
+In graphql we can call all different endpoints together.
