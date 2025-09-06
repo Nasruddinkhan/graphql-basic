@@ -20,3 +20,41 @@ In graphql we can call all different endpoints together.
 It is a shorthand for:
 ```java
 @SchemaMapping(typeName = "Query")
+## Batch Mapping in Spring GraphQL (`@BatchMapping`)
+
+`@BatchMapping` is used to **optimize resolving fields for a list of parent objects**.  
+Instead of fetching related data individually for each parent (N+1 problem), batch mapping allows fetching all related data in a single call.
+
+---
+
+### **Example Schema**
+
+```graphql
+type Customer {
+    id: ID!
+    name: String!
+    orders: [Order]
+}
+
+type Order {
+    orderId: ID!
+    description: String
+}
+
+type Query {
+    customers: [Customer]
+}
+@Controller
+public class CustomerController {
+
+    @QueryMapping
+    public List<Customer> customers() {
+        return customerService.getAllCustomers();
+    }
+
+    @BatchMapping(typeName = "Customer", field = "orders")
+    public Map<Customer, List<Order>> orders(List<Customer> customers) {
+        // Fetch orders for all customers in a single batch
+        return orderService.getOrdersForCustomers(customers);
+    }
+}

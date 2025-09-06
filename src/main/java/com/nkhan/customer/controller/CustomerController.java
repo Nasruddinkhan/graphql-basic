@@ -9,6 +9,7 @@ import com.nkhan.customer.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
@@ -48,9 +49,10 @@ public class CustomerController {
         return customerService.findCustomerByIdRange(idFilter).log();
     }
 
-    @SchemaMapping(typeName = "Customer",  field = "orders")
+    //@SchemaMapping(typeName = "Customer",  field = "orders")
+    @BatchMapping(typeName = "Customer",  field = "orders")
     //@QueryMapping("orders")
-    public Flux<CustomerOrder> getOrderByCustomerName(Customer customer){
-        return orderService.getOrderByCustomerName(customer.name());
+    public  Flux<List<CustomerOrder>>  getOrderByCustomerName(List<Customer> customer){
+        return orderService.getOrderByCustomerName(customer.stream().map(Customer::name).toList());
     }
 }

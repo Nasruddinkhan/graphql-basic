@@ -27,4 +27,9 @@ public class OderServiceImpl implements OrderService {
         log.info("name ={} orders = {}", name, orders);
         return Flux.fromIterable(orders.getOrDefault(name, List.of()));
     }
+
+    @Override
+    public Flux<List<CustomerOrder>> getOrderByCustomerName(List<String> names) {
+        return Flux.fromIterable(names).map(name-> orders.getOrDefault(name, List.of()));
+    }
 }
