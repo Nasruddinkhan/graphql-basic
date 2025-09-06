@@ -16,7 +16,11 @@ import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @Slf4j
@@ -29,7 +33,7 @@ public class CustomerController {
             typeName = "Query",
             field = "customers"
     )
-   // @QueryMapping("customers")
+    // @QueryMapping("customers")
     public Flux<Customer> findAllCustomers() {
         return customerService.findAllCustomers();
     }
@@ -49,10 +53,27 @@ public class CustomerController {
         return customerService.findCustomerByIdRange(idFilter).log();
     }
 
-    //@SchemaMapping(typeName = "Customer",  field = "orders")
-    @BatchMapping(typeName = "Customer",  field = "orders")
-    //@QueryMapping("orders")
-    public  Flux<List<CustomerOrder>>  getOrderByCustomerName(List<Customer> customer){
-        return orderService.getOrderByCustomerName(customer.stream().map(Customer::name).toList());
+    /* N+1 problem
+       //@SchemaMapping(typeName = "Customer",  field = "orders")
+       @BatchMapping(typeName = "Customer",  field = "orders")
+       //@QueryMapping("orders")
+       public  Flux<List<CustomerOrder>>  getOrderByCustomerName(List<Customer> customer){
+           return orderService.getOrderByCustomerName(customer.stream().map(Customer::name).toList());
+       }
+   */
+    //N+1 problem with order Size/Order Mismatch
+    @BatchMapping(typeName = "Customer", field = "orders")
+    public Mono<Map<Customer, List<CustomerOrder>>> getOrders(List<Customer> customers) {
+        var names = customers.stream().map(Customer::name).toList();
+        return orderService.getOrderByCustomerName(names)
+                .collectList() // Flux<List<CustomerOrder>> → List<List<CustomerOrder>>
+                .map(orderLists ->
+                        IntStream.range(0, customers.size())
+                                .boxed()
+                                .collect(Collectors.toMap(
+                                        customers::get, // key: Customer
+                                        i -> i < orderLists.size() ? orderLists.get(i) : List.of() // value: orders or empty list
+                                ))
+                );
     }
 }
