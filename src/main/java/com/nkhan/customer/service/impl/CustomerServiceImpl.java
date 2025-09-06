@@ -17,48 +17,6 @@ import static com.nkhan.util.RandomStringGenerator.randomString;
 public class CustomerServiceImpl implements CustomerService {
     private final Flux<Customer> customerFlux = Flux.just(
             Customer.builder()
-                    .customerId(ThreadLocalRandom.current().nextInt(0, 1000))
-                    .name(randomString(20))
-
-                    .state(randomString(20))
-                    .city(randomString(15))
-                    .country(randomString(10))
-                    .address(randomString(500))
-                    .pinCode(randomString(6))
-                    .address(randomString(2000))
-            .build(),
-            Customer.builder()
-                    .customerId(ThreadLocalRandom.current().nextInt(0, 1000))
-                    .name(randomString(20))
-
-                    .state(randomString(20))
-                    .city(randomString(15))
-                    .country(randomString(10))
-                    .address(randomString(500))
-                    .pinCode(randomString(6))
-                    .address(randomString(2000))
-                    .build(),
-            Customer.builder()
-                    .name(randomString(20))
-
-                    .customerId(ThreadLocalRandom.current().nextInt(0, 1000))
-                    .state(randomString(20))
-                    .city(randomString(15))
-                    .country(randomString(10))
-                    .address(randomString(500))
-                    .pinCode(randomString(6))
-                    .address(randomString(2000))
-                    .build(),
-            Customer.builder()
-                    .customerId(ThreadLocalRandom.current().nextInt(0, 1000))
-                    .state(randomString(20))
-                    .city(randomString(15))
-                    .country(randomString(10))
-                    .address(randomString(500))
-                    .pinCode(randomString(6))
-                    .address(randomString(2000))
-                    .build(),
-            Customer.builder()
                     .name("John Doe")
                     .customerId(101)
                     .city("Riyadh")

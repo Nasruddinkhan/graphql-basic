@@ -2,12 +2,15 @@ package com.nkhan.customer.controller;
 
 
 import com.nkhan.customer.model.Customer;
+import com.nkhan.customer.model.CustomerOrder;
 import com.nkhan.customer.model.IdRangeFilter;
 import com.nkhan.customer.service.CustomerService;
+import com.nkhan.customer.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,23 +22,35 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
+    private final OrderService orderService;
 
-    @QueryMapping("customers")
-    public Flux<Customer> findAllCustomer(){
-        return customerService.findAllCustomers().log();
+    @SchemaMapping(
+            typeName = "Query",
+            field = "customers"
+    )
+   // @QueryMapping("customers")
+    public Flux<Customer> findAllCustomers() {
+        return customerService.findAllCustomers();
     }
 
     @QueryMapping("customerByAddressContain")
-    public Flux<Customer> findAllCustomer(@Argument String address){
+    public Flux<Customer> findAllCustomer(@Argument String address) {
         return customerService.customerByAddressContain(address).log();
     }
 
     @QueryMapping("customerById")
-    public Mono<Customer> findCustomerById(@Argument Integer customerId){
+    public Mono<Customer> findCustomerById(@Argument Integer customerId) {
         return customerService.findCustomerById(customerId).log();
     }
+
     @QueryMapping("customerByRangeId")
-    public Flux<Customer> findCustomerByIdRange(@Argument IdRangeFilter idFilter){
+    public Flux<Customer> findCustomerByIdRange(@Argument IdRangeFilter idFilter) {
         return customerService.findCustomerByIdRange(idFilter).log();
+    }
+
+    @SchemaMapping(typeName = "Customer",  field = "orders")
+    //@QueryMapping("orders")
+    public Flux<CustomerOrder> getOrderByCustomerName(Customer customer){
+        return orderService.getOrderByCustomerName(customer.name());
     }
 }

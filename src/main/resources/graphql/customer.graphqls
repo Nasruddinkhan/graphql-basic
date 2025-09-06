@@ -16,4 +16,9 @@ type Customer{
     country: String
     pinCode: String
     address: String
+    orders: [CustomerOrder]
+}
+type CustomerOrder {
+    orderId: String!
+    description: String!
 }
