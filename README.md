@@ -74,3 +74,51 @@ To prevent mismatches, return a Map<Customer, List<Order>> where every customer 
 Data resolver = logic to fetch or compute a field’s value.
 It does not override the field.
 GraphQL automatically uses a resolver if defined, otherwise it uses the default value from the object.
+
+## Field Alias
+In GraphQL, a field alias allows you to rename a field in your query result. This is useful when:
+
+You query the same field multiple times with different arguments, or
+
+You want the response to have a different name than the schema field.
+` account {
+      id
+      balance: amount
+      type: accountType
+    }`
+## Same API call with different argument
+In graphql we can call same api with different argument.
+` {
+firstCustomer : customerById(customerId: 102) {
+name
+}
+secondCustomer : customerById(customerId: 101) {
+name
+}
+}`
+# Fragments
+A fragment in GraphQL is a reusable set of fields that you can include in multiple queries, mutations, or subscriptions. It helps you avoid duplication and keep queries clean, modular, and maintainable.
+1) To reuse common field selections across queries.
+2) To reduce query duplication when the same fields are needed in different places.
+3) o make queries easier to read and maintain.
+
+`{
+firstCustomer : customerById(customerId: 102) {
+name
+account {
+...AccountFields
+}
+}
+secCustomer : customerById(customerId: 102) {
+name
+account {
+...AccountFields
+}
+}
+}
+fragment AccountFields on Accounts {
+accountNumber: id
+balance: amount
+type: accountType
+}
+`
