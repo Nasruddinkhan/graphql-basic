@@ -158,3 +158,43 @@ type: accountType
   "id1":101, 
   "id2":102
 }`
+
+## Directives: @include and @skip
+1. @include(if: Boolean)
+Includes the field only if the condition is true.
+
+@skip(if: Boolean)
+Skips the field if the condition is true.
+
+Both take a Boolean argument and are mutually exclusive in purpose.
+# @include
+`query GetCustomer($id: Int!, $includeBalance: Boolean!) {
+customerById(customerId: $id) {
+name
+account {
+amount @include(if: $includeBalance)
+accountType
+}
+}
+}
+`
+`{
+"id": 123,
+"includeBalance": true
+}`
+#skip
+`query GetCustomer($id: Int!, $skipBalance: Boolean!) {
+  customerById(customerId: $id) {
+    name
+    account {
+      amount @skip(if: $skipBalance)
+      accountType
+    }
+  }
+}
+`
+`{
+  "id": 101,
+  "skipBalance": true
+}
+`
