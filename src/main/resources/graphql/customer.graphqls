@@ -17,6 +17,7 @@ type Customer{
     pinCode: String
     address: String
     orders: [CustomerOrder]
+    account: Accounts
 }
 type CustomerOrder {
     orderId: String!
