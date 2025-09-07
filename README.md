@@ -122,3 +122,39 @@ balance: amount
 type: accountType
 }
 `
+## Variable
+
+A variable in GraphQL is a placeholder that allows you to pass dynamic values into a query, mutation, or subscription without hardcoding them. Variables make your GraphQL operations reusable, secure, and cleaner.
+
+1) Avoid hardcoding values directly in queries.
+
+2) Reuse the same query with different inputs.
+
+3) Improve security by separating query structure from user input.
+
+4) Reduce query complexity for dynamic values.
+
+`query GetTwoCustomers($id1: Int!, $id2: Int!) {
+firstCustomer: customerById(customerId: $id1) {
+name
+account {
+...AccountFields
+}
+}
+secCustomer: customerById(customerId: $id2) {
+name
+account {
+...AccountFields
+}
+}
+}
+fragment AccountFields on Accounts {
+accountNumber: id
+balance: amount
+type: accountType
+}
+`
+`{ 
+  "id1":101, 
+  "id2":102
+}`
