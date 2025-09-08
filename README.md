@@ -198,3 +198,65 @@ accountType
   "skipBalance": true
 }
 `
+## DataFetchingFieldSelectionSet
+
+A DataFetchingFieldSelectionSet represents the set of fields requested in the current GraphQL query for a specific field or resolver. It allows you to see which fields the client has actually requested so you can:
+
+1) Fetch only the necessary data (avoid over-fetching)
+
+2) Perform conditional logic based on requested fields
+
+3) Optimize database queries (e.g., JPA, Mongo, or REST calls)
+   In GraphQL (especially with graphql-java and Spring Boot GraphQL), DataFetchingEnvironment (DFE) is the core object passed to your DataFetcher or Resolver method. It contains all the contextual information about the current field being resolved, including arguments, parent data, query context, and the selection set.
+
+## DataFetchingEnvironment?
+
+It’s an interface provided by graphql.schema that gives you access to:
+
+Field arguments (variables provided by the client)
+
+Parent object (source object in the resolver chain)
+
+GraphQL context (custom context like user info, tenant ID)
+
+Selection set (fields requested by the client)
+
+Execution info (path, schema type, etc.)
+
+# Key Methods in DataFetchingEnvironment
+
+1) getArgument(String name)
+Get an argument passed to the field.
+
+String id = environment.getArgument("id");
+
+
+2) getArguments()
+Get all arguments as a map.
+
+Map<String, Object> args = environment.getArguments();
+
+
+3) getSource()
+Get the parent object in the resolver chain.
+
+Customer customer = environment.getSource();
+
+
+4) getContext()
+Access a custom context object (like JWT claims, tenant ID).
+
+MyContext ctx = environment.getContext();
+
+
+5) getSelectionSet()
+Get the requested fields using DataFetchingFieldSelectionSet.
+
+DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet();
+
+
+6) getFieldDefinition() / getFieldType()
+Get schema metadata about the field being resolved.
+
+7) getGraphQlContext() (in newer versions)
+Access a strongly typed context using GraphQLContext.
