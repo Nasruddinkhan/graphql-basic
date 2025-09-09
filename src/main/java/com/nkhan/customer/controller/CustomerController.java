@@ -3,9 +3,12 @@ package com.nkhan.customer.controller;
 
 import com.nkhan.customer.model.Customer;
 import com.nkhan.customer.model.CustomerOrder;
+import com.nkhan.customer.model.CustomerWithOrder;
 import com.nkhan.customer.model.IdRangeFilter;
+import com.nkhan.customer.service.CustomerOrderDataFetcher;
 import com.nkhan.customer.service.CustomerService;
 import com.nkhan.customer.service.OrderService;
+import graphql.schema.DataFetchingFieldSelectionSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -25,32 +28,34 @@ import java.util.stream.IntStream;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomerController {
-    private final CustomerService customerService;
-    private final OrderService orderService;
+   // private final CustomerService customerService;
+   // private final OrderService orderService;
+
+    private final CustomerOrderDataFetcher customerOrderDataFetcher;
 
     @SchemaMapping(
             typeName = "Query",
             field = "customers"
     )
     // @QueryMapping("customers")
-    public Flux<Customer> findAllCustomers() {
-        return customerService.findAllCustomers();
+    public Flux<CustomerWithOrder> findAllCustomers(DataFetchingFieldSelectionSet selectionSet) {
+        return customerOrderDataFetcher.getAllCustomer(selectionSet);
     }
 
-    @QueryMapping("customerByAddressContain")
-    public Flux<Customer> findAllCustomer(@Argument String address) {
-        return customerService.customerByAddressContain(address).log();
-    }
-
-    @QueryMapping("customerById")
-    public Mono<Customer> findCustomerById(@Argument Integer customerId) {
-        return customerService.findCustomerById(customerId).log();
-    }
-
-    @QueryMapping("customerByRangeId")
-    public Flux<Customer> findCustomerByIdRange(@Argument IdRangeFilter idFilter) {
-        return customerService.findCustomerByIdRange(idFilter).log();
-    }
+//    @QueryMapping("customerByAddressContain")
+//    public Flux<Customer> findAllCustomer(@Argument String address) {
+//        return customerService.customerByAddressContain(address).log();
+//    }
+//
+//    @QueryMapping("customerById")
+//    public Mono<Customer> findCustomerById(@Argument Integer customerId) {
+//        return customerService.findCustomerById(customerId).log();
+//    }
+//
+//    @QueryMapping("customerByRangeId")
+//    public Flux<Customer> findCustomerByIdRange(@Argument IdRangeFilter idFilter) {
+//        return customerService.findCustomerByIdRange(idFilter).log();
+//    }
 
     /* N+1 problem
        //@SchemaMapping(typeName = "Customer",  field = "orders")
@@ -61,7 +66,7 @@ public class CustomerController {
        }
    */
     //N+1 problem with order Size/Order Mismatch
-    @BatchMapping(typeName = "Customer", field = "orders")
+   /* @BatchMapping(typeName = "Customer", field = "orders")
     public Mono<Map<Customer, List<CustomerOrder>>> getOrders(List<Customer> customers) {
         var names = customers.stream().map(Customer::name).toList();
         return orderService.getOrderByCustomerName(names)
@@ -74,5 +79,5 @@ public class CustomerController {
                                         i -> i < orderLists.size() ? orderLists.get(i) : List.of() // value: orders or empty list
                                 ))
                 );
-    }
+    }*/
 }
