@@ -8,6 +8,8 @@ import com.nkhan.customer.model.IdRangeFilter;
 import com.nkhan.customer.service.CustomerOrderDataFetcher;
 import com.nkhan.customer.service.CustomerService;
 import com.nkhan.customer.service.OrderService;
+import com.nkhan.customer.service.datafetcher.OrderDataFetcher;
+import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +33,15 @@ public class CustomerController {
    // private final CustomerService customerService;
    // private final OrderService orderService;
 
-    private final CustomerOrderDataFetcher customerOrderDataFetcher;
+    private final OrderDataFetcher orderDataFetcher;
 
     @SchemaMapping(
             typeName = "Query",
             field = "customers"
     )
     // @QueryMapping("customers")
-    public Flux<CustomerWithOrder> findAllCustomers(DataFetchingFieldSelectionSet selectionSet) {
-        return customerOrderDataFetcher.getAllCustomer(selectionSet);
+    public Flux<CustomerWithOrder> findAllCustomers(DataFetchingEnvironment selectionSet) throws Exception {
+        return orderDataFetcher.get(selectionSet);
     }
 
 //    @QueryMapping("customerByAddressContain")
