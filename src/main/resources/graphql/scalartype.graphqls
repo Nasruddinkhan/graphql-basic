@@ -1,0 +1,31 @@
+scalar Byte
+scalar Short
+scalar BigDecimal
+scalar BigInteger
+scalar Date
+scalar LocalTime
+scalar DateTime
+ extend type Query {
+    get: AllScalarType
+}
+type AllScalarType{
+    id: ID
+    age: Int
+    amount: Float
+    name: String
+    isValid: Boolean
+    distance: Float
+    currentYear: Byte
+    currentMonth: Short
+    bigDecimal: BigDecimal
+    bigInteger: BigInteger
+    date: Date
+    time: LocalTime
+    dateTime: DateTime
+    role: Role
+}
+
+enum Role{
+    ADMIN
+    USER
+}
