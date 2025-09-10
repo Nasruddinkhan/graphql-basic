@@ -11,6 +11,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Controller
@@ -33,7 +34,7 @@ public class ScalarController {
                 .bigInteger(BigInteger.valueOf(1234567890L))
                 .date(LocalDate.now())
                 .time(LocalTime.now())
-                .dateTime(LocalDateTime.now())
+                .dateTime(OffsetDateTime.now())
                 .role(isTrue ? Role.ADMIN : Role.USER) // assuming you have an enum Role { ADMIN, USER, ... }
                 .build());
     }

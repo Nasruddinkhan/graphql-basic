@@ -8,6 +8,8 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+
 @Builder
 public record AllScalarType(
         String id,
@@ -21,9 +23,9 @@ public record AllScalarType(
         BigDecimal bigDecimal,
         BigInteger bigInteger,
         LocalDate date,
-        @JsonFormat(pattern = "HH:mm:ss")
+        @JsonFormat(pattern = "HH:mm:ss", shape = JsonFormat.Shape.STRING)
         LocalTime time,
-        LocalDateTime dateTime,
+        OffsetDateTime dateTime,
         Role role
 ) {}
 
