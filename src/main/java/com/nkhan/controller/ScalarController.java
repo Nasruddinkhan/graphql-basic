@@ -25,7 +25,7 @@ public class ScalarController {
                 .id("12345")
                 .age(30)
                 .amount(2500.75f)
-                .name("John Doe")
+                .name("Nasruddin khan")
                 .isValid(true)
                 .distance(123.45)
                 .currentYear((byte) 25)
