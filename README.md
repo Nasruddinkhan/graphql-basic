@@ -260,3 +260,28 @@ Get schema metadata about the field being resolved.
 
 7) getGraphQlContext() (in newer versions)
 Access a strongly typed context using GraphQLContext.
+
+# GraphQL Scalar
+
+A scalar represents a single value (string, number, boolean, etc.).
+
+They are terminal types — you can’t drill down further.
+
+# Custom Scalars
+
+Sometimes built-in scalars aren’t enough. You can define custom scalars for domain-specific types:
+
+Date / DateTime , Email BigDecimal URL etc.
+`@Bean
+public RuntimeWiringConfigurer configurer(){
+    return  c -> c.scalar(ExtendedScalars.GraphQLLong)
+    .scalar(ExtendedScalars.GraphQLByte)
+    .scalar(ExtendedScalars.GraphQLShort)
+    .scalar(ExtendedScalars.GraphQLBigDecimal)
+    .scalar(ExtendedScalars.GraphQLBigInteger)
+    .scalar(ExtendedScalars.Date)
+    .scalar(ExtendedScalars.GraphQLBigDecimal)
+    .scalar(ExtendedScalars.LocalTime)
+    .scalar(ExtendedScalars.DateTime);
+}`
+

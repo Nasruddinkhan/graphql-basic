@@ -5,8 +5,14 @@ scalar BigInteger
 scalar Date
 scalar LocalTime
 scalar DateTime
- extend type Query {
+scalar Object
+extend type Query {
     get: AllScalarType
+    products: [Product]
+}
+type Product {
+    name: String
+    attribute: Object
 }
 type AllScalarType{
     id: ID
