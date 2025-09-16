@@ -1,8 +1,11 @@
 package com.nkhan.config;
 
+import com.nkhan.payment.model.WalletDto;
 import graphql.scalars.ExtendedScalars;
+import graphql.schema.TypeResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.graphql.execution.ClassNameTypeResolver;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 
 @Configuration
@@ -19,7 +22,16 @@ public class AppConfig {
                 .scalar(ExtendedScalars.GraphQLBigDecimal)
                 .scalar(ExtendedScalars.LocalTime)
                 .scalar(ExtendedScalars.Object)
-                .scalar(ExtendedScalars.DateTime);
+                .scalar(ExtendedScalars.DateTime)
+                .type("PaymentMethod", typeWiring -> typeWiring.typeResolver(typeResolver()));
 
+
+    }
+
+    @Bean
+    public TypeResolver typeResolver(){
+        ClassNameTypeResolver resolver = new ClassNameTypeResolver();
+        resolver.addMapping(WalletDto.class, "Wallet");
+        return resolver;
     }
 }

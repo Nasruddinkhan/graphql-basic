@@ -285,3 +285,80 @@ public RuntimeWiringConfigurer configurer(){
     .scalar(ExtendedScalars.DateTime);
 }`
 
+# GraphQL interface schema.
+
+In GraphQL, interfaces are an abstract type that define fields that multiple object types must include. They’re useful when you want polymorphism (like in OOP) and need a way to query different object types through a common contract.
+
+`interface PaymentMethod {
+id: ID!
+type: String!
+createdAt: String!
+}
+type CreditCard implements PaymentMethod {
+id: ID!
+type: String!
+createdAt: String!
+last4: String!
+brand: String!
+}
+type BankAccount implements PaymentMethod {
+id: ID!
+type: String!
+createdAt: String!
+bankName: String!
+accountNumberMasked: String!
+}
+type Wallet implements PaymentMethod {
+id: ID!
+type: String!
+createdAt: String!
+balance: Float!
+currency: String!
+}
+type Query {
+paymentMethods(userId: ID!): [PaymentMethod!]!
+}`
+
+`query PaymentMethods {
+    paymentMethods(userId: "123") {
+        id
+        type
+        createdAt
+        ... on CreditCard {
+            last4
+        }
+        ... on Wallet {
+            amount: balance
+            currency
+        }
+        ... on BankAccount {
+      bankName
+      accountNo: accountNumberMasked
+    }
+    }
+}
+`
+# __typename
+__typename is a GraphQL introspection field automatically available on all objects.
+
+It tells you the concrete type name of the object being returned.
+
+This is especially useful when working with interfaces and unions, where multiple types could be returned.
+
+# TypeResolver
+
+In GraphQL Java (and Spring GraphQL), when you return an interface (e.g. PaymentMethod) or union, the engine must know which GraphQL type name (Wallet, CreditCard, etc.) corresponds to the returned Java object.
+
+`@Bean
+    public TypeResolver typeResolver(){
+        ClassNameTypeResolver resolver = new ClassNameTypeResolver();
+        resolver.addMapping(WalletDto.class, "Wallet");
+        return resolver;
+    }`
+
+`
+@Bean
+public RuntimeWiringConfigurer configurer(){
+return  c -> c.type("PaymentMethod", typeWiring -> typeWiring.typeResolver(typeResolver()));
+}
+`

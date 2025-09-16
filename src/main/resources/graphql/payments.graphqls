@@ -1,0 +1,34 @@
+# Common contract for all payment methods
+interface PaymentMethod {
+    id: ID!
+    type: String!
+    createdAt: String!
+}
+
+type CreditCard implements PaymentMethod {
+    id: ID!
+    type: String!
+    createdAt: String!
+    last4: String!
+    brand: String!
+}
+
+type BankAccount implements PaymentMethod {
+    id: ID!
+    type: String!
+    createdAt: String!
+    bankName: String!
+    accountNumberMasked: String!
+}
+
+type Wallet implements PaymentMethod {
+    id: ID!
+    type: String!
+    createdAt: String!
+    balance: Float!
+    currency: String!
+}
+
+extend type Query {
+    paymentMethods(userId: ID!): [PaymentMethod!]!
+}
