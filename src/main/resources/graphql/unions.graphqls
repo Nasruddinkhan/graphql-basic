@@ -1,0 +1,23 @@
+type User {
+    id: ID!
+    username: String!
+    email: String!
+}
+
+type Products {
+    id: ID!
+    name: String!
+    price: Float!
+}
+
+type Article {
+    id: ID!
+    title: String!
+    content: String!
+}
+
+union SearchResult = User | Products | Article
+
+extend type Query {
+    search(keyword: String!): [SearchResult!]!
+}

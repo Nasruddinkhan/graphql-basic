@@ -1,6 +1,9 @@
 package com.nkhan.config;
 
 import com.nkhan.payment.model.WalletDto;
+import com.nkhan.union.model.ArticleDto;
+import com.nkhan.union.model.ProductDto;
+import com.nkhan.union.model.UserDto;
 import graphql.scalars.ExtendedScalars;
 import graphql.schema.TypeResolver;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +26,8 @@ public class AppConfig {
                 .scalar(ExtendedScalars.LocalTime)
                 .scalar(ExtendedScalars.Object)
                 .scalar(ExtendedScalars.DateTime)
-                .type("PaymentMethod", typeWiring -> typeWiring.typeResolver(typeResolver()));
+                .type("PaymentMethod", typeWiring -> typeWiring.typeResolver(typeResolver()))
+                .type("SearchResult", typeWiring -> typeWiring.typeResolver(typeResolver()));
 
 
     }
@@ -32,6 +36,10 @@ public class AppConfig {
     public TypeResolver typeResolver(){
         ClassNameTypeResolver resolver = new ClassNameTypeResolver();
         resolver.addMapping(WalletDto.class, "Wallet");
+        resolver.addMapping(ArticleDto.class, "Article");
+        resolver.addMapping(ProductDto.class, "Products");
+        resolver.addMapping(UserDto.class, "User");
+
         return resolver;
     }
 }

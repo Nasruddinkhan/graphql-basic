@@ -362,3 +362,4 @@ public RuntimeWiringConfigurer configurer(){
 return  c -> c.type("PaymentMethod", typeWiring -> typeWiring.typeResolver(typeResolver()));
 }
 `
+
