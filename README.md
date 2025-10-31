@@ -357,7 +357,124 @@ public RuntimeWiringConfigurer configurer() {
         typeWiring -> typeWiring.typeResolver(typeResolver()));
 }
 ```
+---
 
+## 🚀 GraphQL Query Caching with `PreparsedDocumentProvider`
+
+By default, every GraphQL query sent to the server is **parsed and validated** before execution.  
+For large or frequently repeated queries, this process can become expensive.  
+To optimize this, Spring Boot allows caching parsed GraphQL documents using a `PreparsedDocumentProvider`.
+
+### 🧠 What It Does
+
+- Caches parsed GraphQL documents to avoid re-parsing on repeated queries
+- Improves performance for repeated or large client queries
+- Reduces CPU load and validation time
+- Fully supports asynchronous execution
+
+---
+
+### 🧩 Implementation Example
+
+#### 📁 **Configuration Class**
+
+```java
+package com.nkhan.cache.config;
+
+import graphql.execution.preparsed.PreparsedDocumentEntry;
+import graphql.execution.preparsed.PreparsedDocumentProvider;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.graphql.GraphQlSourceBuilderCustomizer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+
+@Configuration
+@Slf4j
+public class OperationalCachingConfig {
+
+    @Bean
+    public GraphQlSourceBuilderCustomizer sourceBuilderCustomizer(PreparsedDocumentProvider provider) {
+        return builder -> builder.configureGraphQl(configurer ->
+                configurer.preparsedDocumentProvider(provider));
+    }
+
+    @Bean
+    public PreparsedDocumentProvider preparsedDocumentProvider() {
+        Map<String, PreparsedDocumentEntry> cache = new ConcurrentHashMap<>();
+
+        return (executionInput, parseAndValidateFunction) ->
+                CompletableFuture.supplyAsync(() ->
+                        cache.computeIfAbsent(executionInput.getQuery(), query -> {
+                            log.debug("Cache miss for GraphQL query. Parsing and validating...");
+                            PreparsedDocumentEntry entry = parseAndValidateFunction.apply(executionInput);
+                            log.debug("Query cached successfully: {}", query);
+                            return entry;
+                        })
+                );
+    }
+}
+```
+
+---
+
+### ⚙️ Example Controller
+
+```java
+package com.nkhan.cache.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Mono;
+
+@Slf4j
+@Controller
+public class OperationalCacheController {
+
+    @QueryMapping("getDataFromOperationalCache")
+    public Mono<String> getOperation(@Argument("name") String name) {
+        log.info("Received request with name = {}", name);
+        return Mono.fromSupplier(() ->
+                "Hello, %s! Now it's working.".formatted(name)
+        );
+    }
+}
+```
+
+---
+
+### 🧬 GraphQL Schema Definition
+
+```graphql
+extend type Query {
+    getDataFromOperationalCache(name: String!): String
+}
+```
+
+---
+
+### 🧪 Example Query
+
+```graphql
+query {
+  getDataFromOperationalCache(name: "Nasruddin")
+}
+```
+
+### ✅ Expected Response
+
+```json
+{
+  "data": {
+    "getDataFromOperationalCache": "Hello, Nasruddin! Now it's working."
+  }
+}
+```
 ---
 
 ✅ **Summary**
