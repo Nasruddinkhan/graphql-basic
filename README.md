@@ -477,17 +477,86 @@ query {
 ```
 ---
 
+
+## ⚙️ Client Initialization
+
+``` java
+private final HttpGraphQlClient httpClient;
+private final WebSocketGraphQlClient wsClient;
+
+public CustomerGraphQLClient() {
+    String httpUrl = "http://localhost:8082/graphql";
+    String wsUrl   = "ws://localhost:8082/graphql";
+
+    this.httpClient = HttpGraphQlClient.builder()
+            .url(httpUrl)
+            .build();
+
+    WebSocketClient socket = new ReactorNettyWebSocketClient();
+
+    this.wsClient = WebSocketGraphQlClient.builder(wsUrl, socket)
+            .build();
+}
+```
+
+------------------------------------------------------------------------
+
+## 🔍 Queries
+
+### Get All Customers
+
+``` java
+public Flux<CustomerDto> getAllCustomers() {
+    String query = """
+            query {
+              customers {
+                id
+                firstName
+                lastName
+                phone
+                createdAt
+                email
+              }
+            }
+            """;
+
+    return httpClient.document(query)
+            .retrieve("customers")
+            .toEntityList(CustomerDto.class)
+            .flatMapMany(Flux::fromIterable);
+}
+```
+
+### Get Customer by ID
+
+``` java
+public Mono<CustomerDto> getCustomerById(String id) {
+    String query = """
+            query ($id: ID!) {
+              customerById(id: $id) {
+                id
+                firstName
+                lastName
+                phone
+                createdAt
+                email
+              }
+            }
+            """;
+```
+
 ✅ **Summary**
 
-| Concept | Purpose |
-|----------|----------|
-| `@QueryMapping` | Root-level queries |
-| `@BatchMapping` | Fix N+1 problem |
-| Field Alias | Rename result fields |
-| Fragment | Reuse query fields |
-| Variable | Parameterize queries |
-| Directive | Conditional fields |
-| DataFetchingEnvironment | Query context & metadata |
-| Custom Scalar | Extend GraphQL data types |
-| Interface | Shared fields for multiple types |
-| TypeResolver | Resolve interface/union types |
+| Concept                 | Purpose                                                                       |
+|-------------------------|-------------------------------------------------------------------------------|
+| `@QueryMapping`         | Root-level queries                                                            |
+| `@BatchMapping`         | Fix N+1 problem                                                               |
+| Field Alias             | Rename result fields                                                          |
+| Fragment                | Reuse query fields                                                            |
+| Variable                | Parameterize queries                                                          |
+| Directive               | Conditional fields                                                            |
+| DataFetchingEnvironment | Query context & metadata                                                      |
+| Custom Scalar           | Extend GraphQL data types                                                     |
+| Interface               | Shared fields for multiple types                                              |
+| TypeResolver            | Resolve interface/union types                                                 |
+| GrpahQL Clinet          | https://github.com/Nasruddinkhan/customer-ql-svc-mongo Consume graphql client |
